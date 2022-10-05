@@ -4,7 +4,6 @@
   "description": "Create a Discord.js project easily.",
   "main": "index.js",
   "bin": {
-    "@nottca/create-djs-app": "bin/create-project",
     "create-djs-app": "bin/create-project"
   },
   "publishConfig": {
