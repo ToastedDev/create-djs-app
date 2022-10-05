@@ -23,3 +23,11 @@ pnpm create djs-app typescript
 ```
 
 ## Options
+
+**-g**, **--git** - Initalize a Git repository.
+
+**-y**, **--yes** - Skip all the optional questions.
+
+**-i**, **--install** - Makes sure the packages are installed automatically.
+
+##### _more coming soon._
