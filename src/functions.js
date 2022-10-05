@@ -1,6 +1,7 @@
 import arg from "arg";
 import inquirer from "inquirer";
 import execa from "execa";
+import fs from "fs";
 import path from "path";
 
 export function argsToOptions(rawArgs) {
@@ -117,6 +118,9 @@ export async function initGit(options) {
   const result = await execa("git", ["init"], {
     cwd: options.targetDirectory,
   });
+
+  fs.writeFileSync(path.resolve(options.targetDirectory, ".gitignore"), ".env");
+
   if (result.failed) {
     return Promise.reject(new Error("Failed to initialize git"));
   }
