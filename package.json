@@ -20,8 +20,8 @@
     "discord.js-project"
   ],
   "dependencies": {
-    "arg": "^5.0.2",
     "chalk": "^4.1.2",
+    "commander": "^9.4.1",
     "esm": "^3.2.25",
     "execa": "^5.1.1",
     "inquirer": "^8.0.0",

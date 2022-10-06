@@ -1,28 +1,36 @@
-import arg from "arg";
+import { Command, Argument, Option } from "commander";
 import inquirer from "inquirer";
 import execa from "execa";
 import fs from "fs";
 import path from "path";
+import packageJson from "../package.json";
 
 export function argsToOptions(rawArgs) {
-  const args = arg(
-    {
-      "--git": Boolean,
-      "--yes": Boolean,
-      "--install": Boolean,
-      "-g": "--git",
-      "-y": "--yes",
-      "-i": "--install",
-    },
-    {
-      argv: rawArgs.slice(2),
-    }
-  );
+  let template;
+
+  const program = new Command(packageJson.name)
+    .version(packageJson.version)
+    .usage(`[template] [options]`)
+    .addArgument(
+      new Argument("[template]", "The template to use.").choices([
+        "javascript",
+        "typescript",
+      ])
+    )
+    .option("-g, --git", "Initalize a Git repository.", false)
+    .option("-y, --yes", "Skip all the optional questions.")
+    .option(
+      "-i, --install",
+      "Makes sure the packages are installed automatically.",
+      true
+    )
+    .parse(rawArgs);
+
   return {
-    skipPrompts: args["--yes"] || false,
-    git: args["--git"] || false,
-    template: args._[0],
-    runInstall: args["--install"] || false,
+    skipPrompts: program.getOptionValue("yes") || false,
+    git: program.getOptionValue("git") || false,
+    template: program.args[0],
+    runInstall: program.getOptionValue("install") || false,
   };
 }
 
@@ -67,11 +75,12 @@ export async function prompt(options) {
     const answers = await inquirer.prompt(questions);
 
     return {
-      ...options,
       name: answers.name,
       token: answers.token,
       guildId: answers.guildId,
+      git: options.git || true,
       template: options.template || defaultTemplate,
+      runInstall: options.runInstall || true,
     };
   }
 
