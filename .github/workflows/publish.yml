@@ -6,6 +6,22 @@ on:
 
 jobs:
   publish:
+    if: ${{ github.event.action }} == 'released'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - uses: borales/actions-yarn@v3.0.0
+        with:
+          cmd: install
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+  publish-dev:
+    if: ${{ github.event.action }} == 'prereleased'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
