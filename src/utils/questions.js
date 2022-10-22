@@ -1,7 +1,7 @@
 import inquirer from "inquirer";
 import { getPkgManager, validateNpmName } from "../functions";
 import path from "path";
-import { existsSync } from "fs";
+import { existsSync, readdirSync } from "fs";
 
 export async function promptName() {
   const { name } = await inquirer.prompt({
@@ -31,7 +31,8 @@ export async function promptLocation() {
       if (dir === ".") return true;
 
       const validation = existsSync(dir);
-      if (!validation) return true;
+      const isEmpty = readdirSync(dir).length === 0;
+      if (!validation || isEmpty) return true;
       return "That directory already exists.";
     },
   });
