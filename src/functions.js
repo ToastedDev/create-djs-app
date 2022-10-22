@@ -92,7 +92,7 @@ export async function initGit(options) {
     cwd: options.targetDirectory,
   });
 
-  await execa("git", ["commit", "-m", "Inital commit from Create DJS App"], {
+  await execa("git", ["commit", "-m", "Initial commit from Create DJS App"], {
     cwd: options.targetDirectory,
   });
 
