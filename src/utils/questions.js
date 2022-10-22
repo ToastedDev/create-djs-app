@@ -31,8 +31,10 @@ export async function promptLocation() {
       if (dir === ".") return true;
 
       const validation = existsSync(dir);
+      if (!validation) return true;
+
       const isEmpty = readdirSync(dir).length === 0;
-      if (!validation || isEmpty) return true;
+      if (isEmpty) return true;
       return "That directory already exists.";
     },
   });
