@@ -8,6 +8,7 @@ import {
   promptGit,
   promptGuildId,
   promptInstall,
+  promptLocation,
   promptName,
   promptTemplate,
   promptToken,
@@ -43,6 +44,7 @@ export function argsToOptions(rawArgs) {
 
 export async function prompt(options) {
   const name = await promptName();
+  const location = await promptLocation();
   const token = await promptToken();
   const guildId = await promptGuildId();
 
@@ -68,6 +70,7 @@ export async function prompt(options) {
     name: name,
     token: token,
     guildId: guildId,
+    targetDirectory: location,
     template: options.template || template,
     git: options.git || git,
     runInstall: options.runInstall || runInstall,

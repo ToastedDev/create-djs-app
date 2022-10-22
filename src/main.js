@@ -44,7 +44,7 @@ async function copyTemplateFiles(options) {
 export async function createProject(options) {
   options = {
     ...options,
-    targetDirectory: options.targetDirectory || process.cwd(),
+    targetDirectory: options.targetDirectory || ".",
   };
 
   const templateDir = path.resolve(
@@ -74,6 +74,7 @@ export async function createProject(options) {
     {
       title: `Install dependencies using ${getPkgManager()}`,
       task: () => installPkgs(options),
+      enabled: () => options.runInstall,
     },
   ]);
 

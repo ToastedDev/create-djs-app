@@ -1,6 +1,7 @@
 import inquirer from "inquirer";
 import { getPkgManager, validateNpmName } from "../functions";
 import path from "path";
+import { existsSync } from "fs";
 
 export async function promptName() {
   const { name } = await inquirer.prompt({
@@ -18,6 +19,24 @@ export async function promptName() {
   });
 
   return name;
+}
+
+export async function promptLocation() {
+  const { dir } = await inquirer.prompt({
+    type: "input",
+    name: "dir",
+    message: "Where would you like to create your project?",
+    default: ".",
+    validate: (dir) => {
+      if (dir === ".") return true;
+
+      const validation = existsSync(dir);
+      if (!validation) return true;
+      return "That directory already exists.";
+    },
+  });
+
+  return dir;
 }
 
 export async function promptToken() {
