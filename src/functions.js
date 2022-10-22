@@ -136,6 +136,17 @@ export async function initGit(options) {
   return;
 }
 
+export async function installPkgs() {
+  const result = await execa(getPkgManager(), ["install"], {
+    cwd: options.targetDirectory,
+  });
+
+  if (result.failed) {
+    return Promise.reject(new Error("Failed to install packages"));
+  }
+  return;
+}
+
 import validateProjectName from "validate-npm-package-name";
 
 export function validateNpmName(name) {
@@ -151,4 +162,14 @@ export function validateNpmName(name) {
       ...(nameValidation.warnings || []),
     ],
   };
+}
+
+export function getPkgManager() {
+  const userAgent = process.env.npm_config_user_agent;
+
+  if (!userAgent) return "npm";
+
+  if (userAgent.startsWith("yarn")) return "yarn";
+  if (userAgent.startsWith("pnpm")) return "pnpm";
+  else return "npm";
 }

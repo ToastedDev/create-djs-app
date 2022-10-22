@@ -4,8 +4,7 @@ import ncp from "ncp";
 import path from "path";
 import { promisify } from "util";
 import Listr from "listr";
-import { projectInstall } from "pkg-install";
-import { initGit } from "./functions";
+import { initGit, installPkgs } from "./functions";
 
 const access = promisify(fs.access);
 const copy = promisify(ncp);
@@ -74,10 +73,7 @@ export async function createProject(options) {
     },
     {
       title: "Install dependencies",
-      task: () =>
-        projectInstall({
-          cwd: options.targetDirectory,
-        }),
+      task: () => installPkgs(),
     },
   ]);
 
