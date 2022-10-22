@@ -4,6 +4,14 @@ import execa from "execa";
 import fs from "fs";
 import path from "path";
 import packageJson from "../package.json";
+import {
+  promptGit,
+  promptGuildId,
+  promptInstall,
+  promptName,
+  promptTemplate,
+  promptToken,
+} from "./utils/questions";
 
 export function argsToOptions(rawArgs) {
   let template;
@@ -21,8 +29,7 @@ export function argsToOptions(rawArgs) {
     .option("-y, --yes", "Skip all the optional questions.")
     .option(
       "-i, --install",
-      "Makes sure the packages are installed automatically.",
-      true
+      "Makes sure the packages are installed automatically."
     )
     .parse(rawArgs);
 
@@ -35,113 +42,35 @@ export function argsToOptions(rawArgs) {
 }
 
 export async function prompt(options) {
-  const defaultTemplate = "TypeScript";
+  const name = await promptName();
+  const token = await promptToken();
+  const guildId = await promptGuildId();
 
-  const questions = [
-    {
-      type: "text",
-      name: "name",
-      message: "What will you name your project?",
-      default: "my-bot",
-      validate: (name) => {
-        const validation = validateNpmName(path.basename(path.resolve(name)));
-        if (validation.valid) {
-          return true;
-        }
-        return "Invalid project name: " + validation.problems[0];
-      },
-    },
-    {
-      type: "confirm",
-      name: "confirmToken",
-      message: "Do you want to enter your token now?",
-      default: true,
-    },
-  ];
+  let template;
+  let git;
+  let runInstall;
 
-  if (answers.confirmToken)
-    await inquirer.prompt([
-      {
-        type: "text",
-        name: "token",
-        message: "What's the token of your bot?",
-        validate: (token) => {
-          if (!token) return "Please enter a token.";
-          return true;
-        },
-      },
-      {
-        type: "number",
-        name: "guildId",
-        message: "What's your guild ID?",
-        validate: (guildId) => {
-          if (!guildId) return "Please enter a guild ID.";
-          return true;
-        },
-      },
-    ]);
-  else
-    await inquirer.prompt([
-      {
-        type: "number",
-        name: "guildId",
-        message: "What's your guild ID?",
-        validate: (guildId) => {
-          if (!guildId) return "Please enter a guild ID.";
-          return true;
-        },
-      },
-    ]);
-
-  if (options.skipPrompts) {
-    const answers = await inquirer.prompt(questions);
-
+  if (options.skipPrompts)
     return {
-      name: answers.name,
-      token: answers.token || "",
-      guildId: answers.guildId,
+      name: name,
+      token: token || "",
+      guildId: guildId,
       git: options.git || true,
-      template: options.template || defaultTemplate,
+      template: options.template || "TypeScript",
       runInstall: options.runInstall || true,
     };
-  }
 
-  if (!options.template) {
-    questions.push({
-      type: "list",
-      name: "template",
-      message: "What language do you want to use?",
-      choices: ["JavaScript", "TypeScript"],
-      default: defaultTemplate,
-    });
-  }
+  if (!options.template) template = await promptTemplate();
+  if (!options.git) git = await promptGit();
+  if (!options.runInstall) runInstall = await promptInstall();
 
-  if (!options.git) {
-    questions.push({
-      type: "confirm",
-      name: "git",
-      message: "Initialize a git repository?",
-      default: false,
-    });
-  }
-
-  if (!options.runInstall) {
-    questions.push({
-      type: "confirm",
-      name: "runInstall",
-      message: "Install all dependencies?",
-      default: true,
-    });
-  }
-
-  const answers = await inquirer.prompt(questions);
   return {
-    ...options,
-    name: answers.name,
-    token: answers.token,
-    guildId: answers.guildId,
-    template: options.template || answers.template,
-    git: options.git || answers.git,
+    name: name,
+    token: token,
+    guildId: guildId,
+    template: options.template || template,
+    git: options.git || git,
+    runInstall: options.runInstall || runInstall,
   };
 }
 
@@ -158,7 +87,7 @@ export async function initGit(options) {
   return;
 }
 
-export async function installPkgs() {
+export async function installPkgs(options) {
   const result = await execa(getPkgManager(), ["install"], {
     cwd: options.targetDirectory,
   });
