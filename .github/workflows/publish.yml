@@ -2,7 +2,7 @@ name: create-djs-app
 
 on:
   release:
-    types: [created]
+    types: [released]
 
 jobs:
   publish:
