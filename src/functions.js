@@ -52,31 +52,53 @@ export async function prompt(options) {
       },
     },
     {
-      type: "text",
-      name: "token",
-      message: "What's the token of your bot?",
-      validate: (token) => {
-        if (!token) return "Please enter a token.";
-        return true;
-      },
-    },
-    {
-      type: "number",
-      name: "guildId",
-      message: "What's your guild ID?",
-      validate: (guildId) => {
-        if (!guildId) return "Please enter a guild ID.";
-        return true;
-      },
+      type: "confirm",
+      name: "confirmToken",
+      message: "Do you want to enter your token now?",
+      default: true,
     },
   ];
 
   if (options.skipPrompts) {
     const answers = await inquirer.prompt(questions);
 
+    if (answers.confirmToken)
+      await inquirer.prompt([
+        {
+          type: "text",
+          name: "token",
+          message: "What's the token of your bot?",
+          validate: (token) => {
+            if (!token) return "Please enter a token.";
+            return true;
+          },
+        },
+        {
+          type: "number",
+          name: "guildId",
+          message: "What's your guild ID?",
+          validate: (guildId) => {
+            if (!guildId) return "Please enter a guild ID.";
+            return true;
+          },
+        },
+      ]);
+    else
+      await inquirer.prompt([
+        {
+          type: "number",
+          name: "guildId",
+          message: "What's your guild ID?",
+          validate: (guildId) => {
+            if (!guildId) return "Please enter a guild ID.";
+            return true;
+          },
+        },
+      ]);
+
     return {
       name: answers.name,
-      token: answers.token,
+      token: answers.token || "",
       guildId: answers.guildId,
       git: options.git || true,
       template: options.template || defaultTemplate,
