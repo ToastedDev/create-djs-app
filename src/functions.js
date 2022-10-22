@@ -87,6 +87,15 @@ export async function initGit(options) {
   if (result.failed) {
     return Promise.reject(new Error("Failed to initialize git"));
   }
+
+  await execa("git", ["add", "-A"], {
+    cwd: options.targetDirectory,
+  });
+
+  await execa("git", ["commit", "-m", "Initial commit from Create DJS App"], {
+    cwd: options.targetDirectory,
+  });
+
   return;
 }
 

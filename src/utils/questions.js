@@ -66,17 +66,26 @@ export async function promptToken() {
 }
 
 export async function promptGuildId() {
-  const { guildId } = await inquirer.prompt({
-    type: "input",
-    name: "guildId",
-    message: "What's your guild ID?",
-    validate: (guildId) => {
-      if (!guildId) return "Please enter a guild ID.";
-      return true;
-    },
+  const { confirmGuildId } = await inquirer.prompt({
+    type: "confirm",
+    name: "confirmToken",
+    message: "Do you want to enter your guild ID now?",
+    default: true,
   });
 
-  return guildId;
+  if (confirmGuildId) {
+    const { guildId } = await inquirer.prompt({
+      type: "input",
+      name: "guildId",
+      message: "What's your guild ID?",
+      validate: (guildId) => {
+        if (!guildId) return "Please enter a guild ID.";
+        return true;
+      },
+    });
+
+    return guildId;
+  } else return "";
 }
 
 export async function promptTemplate() {
