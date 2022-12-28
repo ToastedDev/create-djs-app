@@ -12,4 +12,4 @@ client.commands = new Discord.Collection();
   require(`./handlers/${handler}`)(client);
 });
 
-client.login(process.env.token);
+client.login(process.env.TOKEN);

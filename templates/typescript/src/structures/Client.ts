@@ -28,7 +28,7 @@ export class Bot extends Client {
 
   start() {
     this.registerModules();
-    this.login(process.env.token);
+    this.login(process.env.TOKEN);
   }
   async importFile(filePath: string) {
     return (await import(filePath))?.default;
