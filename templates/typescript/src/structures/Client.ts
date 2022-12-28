@@ -29,6 +29,7 @@ export class Bot extends Client {
     this.registerModules();
     this.login(process.env.TOKEN);
   }
+
   private async importFile(filePath: string) {
     return (await import(filePath))?.default;
   }
@@ -46,7 +47,7 @@ export class Bot extends Client {
 
   async registerModules() {
     // Commands
-    const slashCommands: ApplicationCommandDataResolvable[] = [];
+    const commands: ApplicationCommandDataResolvable[] = [];
     fs.readdirSync(path.join(__dirname, "../commands")).forEach(async (dir) => {
       const commandFiles = fs
         .readdirSync(path.join(__dirname, `../commands/${dir}`))
@@ -59,13 +60,13 @@ export class Bot extends Client {
         if (!command.name) return;
 
         this.commands.set(command.name, command);
-        slashCommands.push(command);
+        commands.push(command);
       }
     });
 
     this.on("ready", () => {
       this.registerCommands({
-        commands: slashCommands,
+        commands,
         guildId: this.config.guildId,
       });
     });

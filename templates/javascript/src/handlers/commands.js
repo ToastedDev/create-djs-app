@@ -17,21 +17,14 @@ module.exports = async (client) => {
     }
   });
 
-  const rest = new REST({ version: "9" }).setToken(process.env.token);
-
   client.on("ready", async () => {
-    const deploySlashGlobally =
-      client.config.deploySlashGlobally === "false" ? false : true;
-    await rest.put(
-      deploySlashGlobally
-        ? Routes.applicationCommands(client.user.id)
-        : Routes.applicationGuildCommands(
-            client.user.id,
-            client.config.guildId
-          ),
-      {
-        body: commands,
-      }
-    );
+    if (!client.config.deploySlashGlobally) {
+      const guild = client.guilds.cache.get(client.config.guildId);
+      guild?.commands.set(commands);
+      console.log(`Registered commands in ${guild?.name}.`);
+    } else {
+      this.application?.commands.set(commands);
+      console.log("Registered commands globally.");
+    }
   });
 };
