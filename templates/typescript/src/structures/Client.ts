@@ -19,7 +19,7 @@ export class Bot extends Client {
   commands: Collection<string, CommandType> = new Collection();
   config: ClientConfig = require("../../config.json");
 
-  constructor(options: BotOptions = {}) {
+  constructor(options?: BotOptions = {}) {
     super({
       intents: ["Guilds", "GuildMessages", "GuildMembers", "MessageContent"],
       ...options,
