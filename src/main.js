@@ -26,13 +26,13 @@ async function copyTemplateFiles(options) {
     JSON.stringify(packageJson, null, 2)
   );
 
-  const dotenv = `token=${options.token}`;
+  const dotenv = `TOKEN=${options.token}`;
 
   fs.writeFileSync(path.resolve(options.targetDirectory, ".env"), dotenv);
 
   const config = {
     guildId: options.guildId.toString(),
-    deploySlashGlobally: false,
+    deploySlashGlobally: options.guildId ? false : true,
   };
 
   fs.writeFileSync(
