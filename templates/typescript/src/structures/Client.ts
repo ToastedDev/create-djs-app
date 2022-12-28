@@ -11,7 +11,6 @@ import { CommandType } from "../typings/Command";
 import { RegisterCommandsOptions } from "../typings/client";
 import { ClientConfig } from "../typings/Config";
 import { Event } from "./Event";
-import { Feature } from "./Feature";
 
 type BotOptions = Omit<ClientOptions, "intents">;
 
@@ -30,7 +29,7 @@ export class Bot extends Client {
     this.registerModules();
     this.login(process.env.TOKEN);
   }
-  async importFile(filePath: string) {
+  private async importFile(filePath: string) {
     return (await import(filePath))?.default;
   }
 
