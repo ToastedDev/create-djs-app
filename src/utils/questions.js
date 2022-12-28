@@ -11,10 +11,8 @@ export async function promptName() {
     default: "my-bot",
     validate: (name) => {
       const validation = validateNpmName(path.basename(path.resolve(name)));
-      if (validation.valid) {
-        return true;
-      }
-      return "Invalid project name: " + validation.problems[0];
+      if (!validation.valid) return "Invalid project name: " + validation.problems[0];
+      else return true
     },
   });
 
